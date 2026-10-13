@@ -1,65 +1,69 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
+import Icon from './Icon';
+import ContactButton from './contact/ContactButton';
 import '../css/Navbar.css';
+
+const links = [
+  { href: '#build', label: 'How we build' },
+  { href: '#services', label: 'Websites & Apps' },
+  { href: '#pricing', label: 'Pricing' },
+  { href: '#process', label: 'Process' },
+  { href: '#faq', label: 'FAQ' },
+];
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
-  const [activeSection, setActiveSection] = useState('');
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 20) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
-
-      // Order matches the page layout
-      const sections = ['about', 'services', 'reviews', 'experts', 'contact'];
-      let current = '';
-      
-      for (const section of sections) {
-        const element = document.getElementById(section);
-        if (element) {
-          // If the scroll position is past the top of this section (plus a small buffer)
-          if (window.scrollY >= element.offsetTop - 250) {
-            current = section;
-          }
-        }
-      }
-      setActiveSection(current);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   return (
-    <nav className='navbar' >
-      <div className="top-badge-container">
-        <div className="top-badge">
-          <span className="pulse-dot"></span> Available for New Projects
-        </div>
+    <header className={`navbar ${scrolled ? 'is-scrolled' : ''} ${open ? 'is-open' : ''}`}>
+      <div className="announce">
+        <span className="announce-dot" />
+        Now booking website & web app projects — free written quote in 24 hours
       </div>
-      <div className="nav-left">
-        <Link href="/" className="nav-logo">
-           Growthmintai
+      <nav className="container nav-inner" aria-label="Main">
+        <Link href="/" className="nav-logo" onClick={() => setOpen(false)}>
+          <Image src="/images/logos/IMG_3904.jpeg" alt="" width={34} height={34} priority />
+          <span>
+            Growth<span className="nav-logo-accent">mint</span> AI
+          </span>
         </Link>
-      </div>
-      <div className="nav-center">
+
         <div className="nav-links">
-          <Link href="#works" className={`nav-link ${activeSection === 'works' ? 'active' : ''}`}>Works</Link>
-          <Link href="#services" className={`nav-link ${activeSection === 'services' ? 'active' : ''}`}>Services</Link>
-          <Link href="#about" className={`nav-link ${activeSection === 'about' ? 'active' : ''}`}>About</Link>
-          <Link href="#blog" className={`nav-link ${activeSection === 'blog' ? 'active' : ''}`}>Blog</Link>
+          {links.map((l) => (
+            <a key={l.href} href={l.href} onClick={() => setOpen(false)}>
+              {l.label}
+            </a>
+          ))}
         </div>
-      </div>
-      <div className="nav-right">
-        <Link href="#contact" className="btn-contact">Contact</Link>
-      </div>
-    </nav>
+
+        <div className="nav-actions">
+          <ContactButton className="btn btn-dark nav-cta" source="navbar">
+            Get a free quote <Icon name="arrow" />
+          </ContactButton>
+          <button
+            className="nav-toggle"
+            aria-label={open ? 'Close menu' : 'Open menu'}
+            aria-expanded={open}
+            onClick={() => setOpen((o) => !o)}
+          >
+            <span />
+            <span />
+          </button>
+        </div>
+      </nav>
+    </header>
   );
 };
 

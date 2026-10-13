@@ -1,25 +1,29 @@
 import Navbar from '../components/Navbar';
 import Hero from '../components/Hero';
-import Logos from '../components/Logos';
-import Features from '../components/Features';
+import BuildPlanner from '../components/BuildPlanner';
 import Services from '../components/Services';
-import Reviews from '../components/Reviews';
-import Experts from '../components/Experts';
-import Newsletter from '../components/Newsletter';
+import Comparison from '../components/Comparison';
+import Pricing from '../components/Pricing';
+import Industries from '../components/Industries';
+import Process from '../components/Process';
+import FAQ from '../components/FAQ';
 import Footer from '../components/Footer';
 
 export default function Home() {
   return (
-    <main>
+    <>
       <Navbar />
-      <Hero />
-      <Logos />
-      <Features />
-      <Services />
-      <Reviews />
-      <Experts />
-      <Newsletter />
+      <main>
+        <Hero />
+        <BuildPlanner />
+        <Services />
+        <Comparison />
+        <Pricing />
+        <Industries />
+        <Process />
+        <FAQ />
+      </main>
       <Footer />
-    </main>
+    </>
   );
 }
