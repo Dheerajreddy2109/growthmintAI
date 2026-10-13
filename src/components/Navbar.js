@@ -29,7 +29,7 @@ const Navbar = () => {
   return (
     <header className={`navbar ${scrolled ? 'is-scrolled' : ''} ${open ? 'is-open' : ''}`}>
       <div className="announce">
-        <span className="announce-dot" />
+        {/* <span className="announce-dot" /> */}
         Now booking website & web app projects — free written quote in 24 hours
       </div>
       <nav className="container nav-inner" aria-label="Main">

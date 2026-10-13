@@ -4,6 +4,7 @@ import React, { createContext, useCallback, useContext, useEffect, useRef, useSt
 import Icon, { WhatsAppIcon } from '../Icon';
 import ContactForm from './ContactForm';
 import { site, whatsappHref } from '@/data/site';
+import { getLenis } from '@/lib/lenis';
 
 const ContactContext = createContext(null);
 
@@ -26,6 +27,8 @@ function Modal({ request, onClose }) {
     const previouslyFocused = document.activeElement;
     const { overflow } = document.body.style;
     document.body.style.overflow = 'hidden';
+    const lenis = getLenis();
+    lenis?.stop(); // freeze the smooth-scrolled page behind the popup
     // The form may already have focused a field (e.g. when it opens on step 2).
     if (!dialogRef.current?.contains(document.activeElement)) {
       dialogRef.current?.querySelector('.cm-main form button, .cm-main form input')?.focus();
@@ -50,7 +53,8 @@ function Modal({ request, onClose }) {
     return () => {
       document.removeEventListener('keydown', onKey);
       document.body.style.overflow = overflow;
-      previouslyFocused?.focus?.();
+      lenis?.start();
+      previouslyFocused?.focus?.({ preventScroll: true });
     };
   }, [onClose]);
 

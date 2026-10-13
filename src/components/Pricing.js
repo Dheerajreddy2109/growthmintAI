@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Icon from './Icon';
 import ContactButton from './contact/ContactButton';
 import { pricing, rupees } from '@/data/site';
+import { gsap, useGSAP, prefersReducedMotion } from '@/lib/gsap';
 import '../css/Pricing.css';
 
 const tabs = [
@@ -14,27 +15,72 @@ const tabs = [
 const Pricing = () => {
   const [tab, setTab] = useState('websites');
   const plans = pricing[tab];
+  const root = useRef(null);
+  const tabsRef = useRef(null);
+  const gliderRef = useRef(null);
+
+  // Scroll reveal only: cards still below the fold rise in as you scroll down to them.
+  useGSAP(
+    () => {
+      if (prefersReducedMotion()) return;
+      const cards = gsap.utils.toArray('.price-card', root.current);
+      if (cards[0].getBoundingClientRect().top <= window.innerHeight) return;
+      gsap.from(cards, {
+        autoAlpha: 0,
+        y: 70,
+        duration: 1.1,
+        ease: 'expo.out',
+        stagger: 0.1,
+        clearProps: 'transform',
+        scrollTrigger: { trigger: cards[0].parentElement, start: 'top 85%', once: true },
+      });
+    },
+    { scope: root, dependencies: [tab], revertOnUpdate: true }
+  );
+
+  // Tab highlight: slides to the active tab with a CSS transition. Clicks are plain UI, so no GSAP here.
+  useEffect(() => {
+    const tabs = tabsRef.current;
+    const glider = gliderRef.current;
+    const place = () => {
+      const active = tabs.querySelector('[aria-selected="true"]');
+      glider.style.transform = `translate(${active.offsetLeft}px, ${active.offsetTop}px)`;
+      glider.style.width = `${active.offsetWidth}px`;
+      glider.style.height = `${active.offsetHeight}px`;
+    };
+    place();
+    tabs.classList.add('has-glider');
+    // The slide is switched on after the first placement, so the highlight doesn't fly in from the corner on load.
+    const frame = requestAnimationFrame(() => glider.classList.add('is-ready'));
+    const observer = new ResizeObserver(place);
+    observer.observe(tabs);
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
+  }, [tab]);
 
   return (
-    <section className="section section-soft" id="pricing">
+    <section className="section section-soft" id="pricing" ref={root}>
       <div className="container">
-        <div className="split-head reveal">
+        <div className="split-head">
           <div>
-            <span className="eyebrow">Transparent pricing</span>
-            <h2 className="h-lg">
+            <span className="eyebrow" data-reveal="left">Transparent pricing</span>
+            <h2 className="h-lg" data-split>
               Pick your size.
               <br />
               See the price.
             </h2>
           </div>
-          <p className="lead">
+          <p className="lead" data-reveal data-delay="0.15">
             Clear starting prices for website development and web app development — then a fixed, written quote for
             your exact scope before you pay anything. Start small and add pages or features when your business needs
             them.
           </p>
         </div>
 
-        <div className="price-tabs" role="tablist" aria-label="Package type">
+        <div className="price-tabs" role="tablist" aria-label="Package type" ref={tabsRef} data-reveal>
+          <span className="price-glider" ref={gliderRef} aria-hidden="true" />
           {tabs.map((t) => (
             <button
               key={t.id}
@@ -85,7 +131,7 @@ const Pricing = () => {
           ))}
         </div>
 
-        <div className="price-care reveal">
+        <div className="price-care" data-reveal>
           <span className="price-care-icon"><Icon name="shield" size={22} /></span>
           <div>
             <b>Care plan, after launch</b>

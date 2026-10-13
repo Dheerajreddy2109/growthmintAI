@@ -4,12 +4,52 @@ import React, { useEffect, useRef, useState } from 'react';
 import Icon from './Icon';
 import ContactButton from './contact/ContactButton';
 import { buildPlans, industries, projectTypes, rupees } from '@/data/site';
+import { gsap, ScrollTrigger, useGSAP, prefersReducedMotion } from '@/lib/gsap';
+import { getLenis } from '@/lib/lenis';
 import '../css/BuildPlanner.css';
 
 const STEP_MS = 1700;
 const DEFAULT_CITY = 'Hyderabad';
 
 const fmtHours = (h) => `${Number.isInteger(h) ? h : h.toFixed(1)} h`;
+
+// Counts up once, the first time the heading scrolls into view. Later project changes just update the number.
+// A plain effect with its own cleanup (not useGSAP) so a project change can't replay the count from zero.
+function HeadingCount({ value }) {
+  const ref = useRef(null);
+  const counted = useRef(false);
+  useEffect(() => {
+    if (counted.current || prefersReducedMotion()) return undefined;
+    const node = ref.current.firstChild; // React's text node; only its text is changed here
+    const state = { v: 0 };
+    let tween;
+    node.nodeValue = '0';
+    const trigger = ScrollTrigger.create({
+      trigger: ref.current,
+      start: 'top 90%',
+      once: true,
+      onEnter: () => {
+        counted.current = true;
+        tween = gsap.to(state, {
+          v: value,
+          duration: 1.2,
+          ease: 'power2.out',
+          onUpdate: () => {
+            node.nodeValue = String(Math.round(state.v));
+          },
+          onComplete: () => {
+            node.nodeValue = String(value);
+          },
+        });
+      },
+    });
+    return () => {
+      trigger.kill();
+      tween?.kill();
+    };
+  }, [value]);
+  return <span ref={ref}>{value}</span>;
+}
 
 function makeFill({ name, city, industry }) {
   const safeName = name.trim() || industry.sample;
@@ -102,6 +142,7 @@ const BuildPlanner = () => {
   const [phase, setPhase] = useState('idle'); // idle | running | done
   const [current, setCurrent] = useState(-1);
   const cardRefs = useRef([]);
+  const root = useRef(null);
 
   const industry = industries.find((i) => i.id === industryId);
   const project = projectTypes.find((p) => p.id === projectId);
@@ -111,10 +152,43 @@ const BuildPlanner = () => {
   const doneCount = phase === 'done' ? steps.length : Math.max(0, current);
   const hoursSoFar = steps.slice(0, doneCount).reduce((s, st) => s + st.hours, 0);
 
+  // Scroll reveals only: the panel and any step card still below the fold rise in as you scroll down to them.
+  useGSAP(
+    () => {
+      if (prefersReducedMotion()) return;
+      const below = (el) => el.getBoundingClientRect().top > window.innerHeight;
+      const panel = root.current.querySelector('.bp-panel');
+      if (below(panel)) {
+        gsap.from(panel, {
+          autoAlpha: 0,
+          x: -50,
+          duration: 1.1,
+          ease: 'expo.out',
+          clearProps: 'all',
+          scrollTrigger: { trigger: panel, start: 'top 88%', once: true },
+        });
+      }
+      const pending = gsap.utils.toArray('.bp-card', root.current).filter(below);
+      gsap.set(pending, { autoAlpha: 0, y: 60 });
+      ScrollTrigger.batch(pending, {
+        start: 'top 90%',
+        once: true,
+        onEnter: (batch) =>
+          gsap.to(batch, { autoAlpha: 1, y: 0, duration: 0.9, ease: 'power3.out', stagger: 0.1, clearProps: 'all' }),
+      });
+    },
+    { scope: root, dependencies: [projectId], revertOnUpdate: true }
+  );
+
   useEffect(() => {
     if (phase !== 'running') return;
     const card = cardRefs.current[current];
-    if (card && window.innerWidth > 900) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (card && window.innerWidth > 900) {
+      // Keep the active step in view; through Lenis so it glides with the rest of the page.
+      const lenis = getLenis();
+      if (lenis) lenis.scrollTo(card, { offset: -Math.max(120, (window.innerHeight - card.offsetHeight) / 2), duration: 1.1 });
+      else card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
     const t = setTimeout(() => {
       setCurrent(current + 1);
       if (current + 1 >= steps.length) setPhase('done');
@@ -150,22 +224,26 @@ const BuildPlanner = () => {
   };
 
   return (
-    <section className="section bp" id="build">
+    <section className="section bp" id="build" ref={root}>
       <div className="container">
-        <div className="bp-head reveal">
-          <span className="bp-badge"><i /> Not a template</span>
-          <h2 className="h-xl">
-            Type your idea.
-            <span className="gradient-text"> See the {Math.round(totalHours)} hours behind it.</span>
+        <div className="bp-head">
+          <span className="bp-badge" data-reveal="left"><i /> Not a template</span>
+          <h2 className="h-xl" data-lines>
+            <span className="mask-line"><span data-line>Type your idea.</span></span>
+            <span className="mask-line">
+              <span data-line className="gradient-text">
+                See the <HeadingCount value={Math.round(totalHours)} /> hours behind it.
+              </span>
+            </span>
           </h2>
-          <p className="lead">
+          <p className="lead" data-reveal data-delay="0.15">
             A template is a design with your name typed in. What you pay us for is the work around it — the searches
             your customers make, the flows your users need, the design, the build, and getting it onto Google. Try it
             with your own business.
           </p>
         </div>
 
-        <div className="bp-form reveal">
+        <div className="bp-form" data-reveal data-delay="0.1">
           <div className="bp-fields">
             <label>
               <span>Business name</span>
@@ -239,7 +317,7 @@ const BuildPlanner = () => {
           <aside className="bp-panel">
             <span className="bp-panel-label">Hours of work</span>
             <div className="bp-counter">
-              <b>{fmtHours(hoursSoFar).replace(' h', '')}</b>
+              <b>{Number.isInteger(hoursSoFar) ? hoursSoFar : hoursSoFar.toFixed(1)}</b>
               <span>/ {fmtHours(totalHours)}</span>
             </div>
             <div className="bp-progress">
@@ -281,7 +359,7 @@ const BuildPlanner = () => {
         </div>
 
         <div className={`bp-result ${phase === 'done' ? 'show' : ''}`}>
-          <div className="bp-receipt">
+          <div className="bp-receipt" data-reveal="left">
             <span className="bp-receipt-label">Your {project.label.toLowerCase()}, itemised</span>
             <h3>{fill('{name}')}</h3>
             <p className="bp-receipt-meta">{fill(projectId === 'website' || projectId === 'store' ? '{city} · {slug}.in' : '{city} · app.{slug}.in')}</p>
@@ -312,7 +390,7 @@ const BuildPlanner = () => {
             </ol>
           </div>
 
-          <div className="bp-result-cta">
+          <div className="bp-result-cta" data-reveal="right" data-delay="0.1">
             <h2 className="h-lg">Get the real version of this.</h2>
             <p className="lead">
               Send it as it is. We reply with the keywords, the features, the domain and a written quote for{' '}

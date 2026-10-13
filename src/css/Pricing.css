@@ -1,4 +1,5 @@
 .price-tabs {
+  position: relative;
   display: inline-flex;
   gap: 6px;
   padding: 6px;
@@ -10,6 +11,8 @@
 }
 
 .price-tabs button {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -28,7 +31,7 @@
   letter-spacing: -0.01em;
 }
 
-.price-tabs span {
+.price-tabs button span {
   font-size: 12.5px;
   color: var(--muted);
 }
@@ -40,6 +43,27 @@
 
 .price-tabs button.on span {
   color: #a8cdbb;
+}
+
+/* Highlight that slides between tabs (placed by Pricing.js; moves with a CSS transition). Until it has been
+   placed, the active tab keeps its own background. */
+.price-glider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 14px;
+  background: var(--brand-deep);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.price-glider.is-ready {
+  opacity: 1;
+  transition: transform 0.55s var(--ease-out), width 0.55s var(--ease-out), height 0.55s var(--ease-out);
+}
+
+.price-tabs.has-glider button.on {
+  background: transparent;
 }
 
 .price-grid {
@@ -59,11 +83,6 @@
   border-radius: 24px;
   border: 1px solid var(--line);
   background: #fff;
-  animation: priceIn 0.45s ease both;
-}
-
-@keyframes priceIn {
-  from { opacity: 0; transform: translateY(10px); }
 }
 
 .price-card.popular {
@@ -211,7 +230,7 @@
     flex: 1;
     padding: 10px 12px;
   }
-  .price-tabs span {
+  .price-tabs button span {
     display: none;
   }
   .price-for {

@@ -36,9 +36,6 @@
   margin: 22px 0 22px;
 }
 
-.bp-head h2 .gradient-text {
-  display: block;
-}
 
 /* ---------- Form ---------- */
 .bp-form {
@@ -147,11 +144,11 @@
   font-weight: 700;
   font-size: 17px;
   box-shadow: 0 14px 30px -12px rgba(11, 21, 17, 0.7);
-  transition: transform 0.2s ease;
+  transition: translate 0.2s ease;
 }
 
 .bp-start:hover {
-  transform: translateY(-1px);
+  translate: 0 -1px;
 }
 
 .bp-start-icon {
@@ -312,17 +309,22 @@
   border: 1px solid var(--line);
   border-radius: 22px;
   background: #fff;
-  transition: opacity 0.5s ease, border-color 0.4s ease, box-shadow 0.4s ease, transform 0.4s ease;
+  /* GSAP reveals cards with opacity/transform, so state styles below stick to other properties. */
+  transition: border-color 0.4s ease, box-shadow 0.4s ease, scale 0.4s ease;
 }
 
-.bp-card.pending {
+.bp-card > * {
+  transition: opacity 0.5s ease;
+}
+
+.bp-card.pending > * {
   opacity: 0.4;
 }
 
 .bp-card.active {
   border-color: rgba(15, 157, 88, 0.55);
   box-shadow: 0 0 0 5px rgba(15, 157, 88, 0.08), 0 24px 50px -24px rgba(15, 157, 88, 0.5);
-  transform: scale(1.01);
+  scale: 1.01;
 }
 
 .bp-card header {
@@ -648,12 +650,12 @@
   background: #fffef8;
   box-shadow: var(--shadow);
   font-size: 14px;
-  transition: box-shadow 0.5s ease, transform 0.5s ease;
+  transition: box-shadow 0.5s ease, rotate 0.5s ease;
 }
 
 .bp-result.show .bp-receipt {
   box-shadow: 0 0 0 4px rgba(198, 243, 107, 0.5), var(--shadow-lg);
-  transform: rotate(-0.6deg);
+  rotate: -0.6deg;
 }
 
 .bp-receipt-label {
