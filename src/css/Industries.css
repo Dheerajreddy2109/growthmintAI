@@ -4,10 +4,6 @@
     #fff;
 }
 
-.ind .h-lg .gradient-text {
-  display: block;
-}
-
 .ind-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -19,12 +15,12 @@
   border-radius: 20px;
   border: 1px solid var(--line);
   background: #fff;
-  transition: border-color 0.2s ease, transform 0.2s ease;
+  transition: border-color 0.2s ease, translate 0.2s ease;
 }
 
 .ind-card:hover {
   border-color: var(--brand);
-  transform: translateY(-2px);
+  translate: 0 -2px;
 }
 
 .ind-card h3 {

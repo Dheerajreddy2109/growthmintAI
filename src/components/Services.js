@@ -15,7 +15,7 @@ const differences = [
           <div className="art-awning">{Array.from({ length: 6 }).map((_, i) => <span key={i} />)}</div>
           <div className="art-shop"><b /><em /></div>
         </div>
-        <span className="art-badge"><Icon name="check" size={22} strokeWidth={2.6} /></span>
+        <span className="art-badge" data-pop><Icon name="check" size={22} strokeWidth={2.6} /></span>
         <span className="art-plus p1"><Icon name="plus" size={18} /></span>
         <span className="art-plus p2"><Icon name="plus" size={14} /></span>
       </div>
@@ -34,7 +34,7 @@ const differences = [
           <div className="art-kpis"><b /><b /><b /></div>
           <div className="art-bars">{[40, 65, 50, 80, 60, 95].map((h, i) => <span key={i} style={{ height: `${h}%` }} />)}</div>
         </div>
-        <span className="art-code"><Icon name="code" size={16} /> <i /></span>
+        <span className="art-code" data-pop><Icon name="code" size={16} /> <i /></span>
       </div>
     ),
   },
@@ -45,10 +45,10 @@ const differences = [
     art: (
       <div className="art art-phone">
         <div className="art-device">
-          <span className="art-tick"><Icon name="check" size={18} strokeWidth={2.6} /></span>
+          <span className="art-tick" data-pop><Icon name="check" size={18} strokeWidth={2.6} /></span>
           <b /><b className="short" />
         </div>
-        <div className="art-msg"><i /><b /><b className="short" /></div>
+        <div className="art-msg" data-pop><i /><b /><b className="short" /></div>
         <div className="art-typing"><i /><i /><i /><em /></div>
       </div>
     ),
@@ -60,16 +60,16 @@ const Services = () => {
     <>
       <section className="section section-soft" id="services">
         <div className="container">
-          <div className="split-head reveal">
+          <div className="split-head">
             <div>
-              <span className="eyebrow">What we build</span>
-              <h2 className="h-lg">
+              <span className="eyebrow" data-reveal="left">What we build</span>
+              <h2 className="h-lg" data-split>
                 Two things.
                 <br />
                 Done properly.
               </h2>
             </div>
-            <p className="lead">
+            <p className="lead" data-reveal data-delay="0.15">
               We only build for the web — so every hour goes into making your website or web application faster,
               clearer and better at bringing in business than the one your competitor bought.
             </p>
@@ -77,7 +77,7 @@ const Services = () => {
 
           <div className="offer-grid">
             {offerings.map((o, idx) => (
-              <article key={o.id} className={`offer-card reveal ${idx === 1 ? 'dark' : ''}`}>
+              <article key={o.id} className={`offer-card ${idx === 1 ? 'dark' : ''}`}>
                 <div className="offer-top">
                   <span className="offer-icon"><Icon name={idx === 0 ? 'layout' : 'code'} size={22} /></span>
                   <span className="offer-eyebrow">{o.eyebrow}</span>
@@ -102,16 +102,16 @@ const Services = () => {
 
       <section className="section" id="design">
         <div className="container">
-          <div className="split-head reveal">
+          <div className="split-head">
             <div>
-              <span className="eyebrow">Built around your business</span>
-              <h2 className="h-lg">
+              <span className="eyebrow" data-reveal="left">Built around your business</span>
+              <h2 className="h-lg" data-split>
                 Good design.
                 <br />
                 A real difference.
               </h2>
             </div>
-            <div>
+            <div data-reveal data-delay="0.15">
               <p className="lead">
                 From a local shop’s first website to a startup’s first product — show people why you are worth
                 choosing, and make it effortless to say yes.
@@ -124,7 +124,7 @@ const Services = () => {
 
           <div className="diff-grid">
             {differences.map((d, i) => (
-              <article key={d.title} className="diff-card reveal">
+              <article key={d.title} className="diff-card">
                 <div className={`diff-art tone-${d.tone}`} aria-hidden="true">{d.art}</div>
                 <div className="diff-copy">
                   <span>{String(i + 1).padStart(2, '0')}</span>

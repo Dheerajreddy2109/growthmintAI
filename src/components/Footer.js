@@ -38,14 +38,14 @@ const Footer = () => {
   return (
     <>
       <section className="final-cta">
-        <div className="container final-inner reveal">
+        <div className="container final-inner">
           <Icon name="sparkle" size={28} className="final-icon" />
-          <h2 className="h-lg">Not sure what you need?</h2>
-          <p className="lead">
+          <h2 className="h-lg" data-split="chars">Not sure what you need?</h2>
+          <p className="lead" data-reveal data-delay="0.2">
             Tell us about your business in two lines and we will tell you honestly whether you need a website, a web
             app, or both. If the smallest package is enough, we will say so.
           </p>
-          <div className="final-btns">
+          <div className="final-btns" data-reveal data-delay="0.35">
             <ContactButton className="btn btn-dark" source="final cta" prefill={{ project: 'Not sure yet' }} title="Tell us what you’re planning.">
               Help me choose <Icon name="arrow" />
             </ContactButton>
@@ -57,7 +57,7 @@ const Footer = () => {
       </section>
 
       <footer className="footer">
-        <div className="container footer-grid">
+        <div className="container footer-grid" data-stagger>
           <div className="footer-brand">
             <div className="footer-logo">
               <Image src="/images/logos/IMG_3904.jpeg" alt="" width={36} height={36} />

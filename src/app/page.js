@@ -8,6 +8,7 @@ import Industries from '../components/Industries';
 import Process from '../components/Process';
 import FAQ from '../components/FAQ';
 import Footer from '../components/Footer';
+import HomeMotion from '../components/motion/HomeMotion';
 
 export default function Home() {
   return (
@@ -24,6 +25,7 @@ export default function Home() {
         <FAQ />
       </main>
       <Footer />
+      <HomeMotion />
     </>
   );
 }
