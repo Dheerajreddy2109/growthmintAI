@@ -29,8 +29,16 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
+## Environment variables
+
+Copy `.env.example` to `.env.local` and fill in real values (never commit `.env.local`):
+
+- `GMAIL_USER` / `GMAIL_APP_PASSWORD` — Gmail credentials used by `/api/contact`.
+- `CONTACT_TO` — comma-separated inboxes receiving enquiries (defaults to `GMAIL_USER`).
+- `NEXT_PUBLIC_GA_ID` — optional Google Analytics 4 measurement ID.
+
 ## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Set the same variables in the Vercel project dashboard before deploying. The easiest way to deploy is the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

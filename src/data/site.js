@@ -1,9 +1,9 @@
 // All editable business details and page copy live here.
 
 export const site = {
-  name: 'Growthmint AI',
-  url: 'https://growthmintai.com',
-  email: 'growthmintai@gmail.com',
+  name: 'Tevratech',
+  url: 'https://tevratech.com',
+  email: 'tevratech@gmail.com',
   // Digits only with country code, e.g. '919876543210'. Leave empty to fall back to email.
   whatsapp: '',
   phoneDisplay: '',

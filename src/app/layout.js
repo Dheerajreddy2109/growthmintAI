@@ -1,6 +1,7 @@
 import { Inter, Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
 import SmoothScrolling from '../components/SmoothScrolling';
+import Analytics from '../components/Analytics';
 import { ContactProvider } from '../components/contact/ContactModal';
 import { site, faqs } from '@/data/site';
 
@@ -12,13 +13,13 @@ const jakarta = Plus_Jakarta_Sans({
   display: 'swap',
 });
 
-const title = 'Website & Web App Development Company in India | Growthmint AI';
+const title = 'Website & Web App Development Company in India | Tevratech';
 const description =
   'Custom website design and web application development for businesses and startups. SEO-ready business websites from ₹7,999, e-commerce stores, booking systems, SaaS MVPs, CRMs and dashboards built with Next.js & React. Fixed written quote. You own the code.';
 
 export const metadata = {
   metadataBase: new URL(site.url),
-  title: { default: title, template: '%s | Growthmint AI' },
+  title: { default: title, template: '%s | Tevratech' },
   description,
   keywords: [
     'website development company',
@@ -52,7 +53,7 @@ export const metadata = {
     title,
     description,
     locale: 'en_IN',
-    images: [{ url: '/images/logos/IMG_3903.jpeg', width: 1170, height: 442, alt: 'Growthmint AI' }],
+    images: [{ url: '/images/logos/IMG_3903.jpeg', width: 1170, height: 442, alt: 'Tevratech' }],
   },
   twitter: {
     card: 'summary_large_image',
@@ -72,15 +73,17 @@ const jsonLd = {
   '@graph': [
     {
       '@type': 'ProfessionalService',
+      '@id': `${site.url}#business`,
       name: site.name,
       url: site.url,
       email: site.email,
       ...(site.phoneDisplay && { telephone: site.phoneDisplay }),
       logo: `${site.url}/images/logos/IMG_3904.jpeg`,
       description,
-      areaServed: 'IN',
+      areaServed: { '@type': 'Country', name: 'India' },
       priceRange: '₹7,999+',
       knowsAbout: ['Website development', 'Web application development', 'E-commerce development', 'SaaS development', 'SEO'],
+      address: { '@type': 'PostalAddress', addressCountry: 'IN' },
     },
     {
       '@type': 'FAQPage',
@@ -98,10 +101,12 @@ export default function RootLayout({ children }) {
     <html lang="en" className={`${inter.variable} ${jakarta.variable}`}>
       {/* Browser extensions (e.g. ColorZilla's cz-shortcut-listen) add attributes to <body> before hydration. */}
       <body suppressHydrationWarning>
+        <a className="skip-link" href="#main">Skip to content</a>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
         />
+        <Analytics />
         <SmoothScrolling>
           <ContactProvider>{children}</ContactProvider>
         </SmoothScrolling>

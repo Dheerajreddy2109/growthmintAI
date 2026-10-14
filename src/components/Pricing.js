@@ -137,7 +137,7 @@ const Pricing = () => {
             <b>Care plan, after launch</b>
             <p>{pricing.care.text}</p>
           </div>
-          <ContactButton className="link-arrow link-button" source="pricing: not sure" prefill={{ project: 'Not sure yet' }}>
+          <ContactButton className="link-arrow link-button" source="pricing: care plan" title="Tell us about the care plan." prefill={{ project: 'Not sure yet', message: 'I would like to know more about the ₹999/month care plan.' }}>
             Not sure which fits? <Icon name="arrow" />
           </ContactButton>
         </div>

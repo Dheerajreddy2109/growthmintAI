@@ -327,3 +327,40 @@ img, svg {
     font-size: 16px;
   }
 }
+
+/* ---------- Accessibility: skip link ---------- */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 1000;
+  padding: 10px 14px;
+  background: var(--brand-deep);
+  color: #fff;
+  border-radius: 0 0 8px 0;
+  font-weight: 600;
+}
+.skip-link:focus {
+  left: 0;
+}
+
+/* ---------- Accessibility: honour reduced motion for CSS-only effects ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .marquee-track,
+  .tech-track {
+    transform: none !important;
+  }
+}
+
+/* ---------- Mobile safe area (sticky bars) ---------- */
+.sticky-bar {
+  padding-bottom: env(safe-area-inset-bottom);
+}

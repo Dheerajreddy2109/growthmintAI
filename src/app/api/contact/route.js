@@ -5,6 +5,16 @@ const MAX_PER_WINDOW = 5;
 const WINDOW_MS = 10 * 60 * 1000;
 const hits = new Map(); // ip -> timestamps (best-effort, per server instance)
 
+// Periodically drop empty/expired buckets so the Map can't grow unbounded.
+function sweepHits() {
+  const now = Date.now();
+  for (const [ip, ts] of hits) {
+    const recent = ts.filter((t) => now - t < WINDOW_MS);
+    if (recent.length) hits.set(ip, recent);
+    else hits.delete(ip);
+  }
+}
+
 let transporter;
 function getTransporter() {
   transporter ??= nodemailer.createTransport({
@@ -16,6 +26,7 @@ function getTransporter() {
 
 function rateLimited(ip) {
   const now = Date.now();
+  sweepHits();
   const recent = (hits.get(ip) || []).filter((t) => now - t < WINDOW_MS);
   recent.push(now);
   hits.set(ip, recent);
@@ -95,6 +106,11 @@ export async function POST(request) {
   if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
     console.error('Contact form: GMAIL_USER / GMAIL_APP_PASSWORD are not set.');
     return Response.json({ ok: false, error: 'Email is not configured yet. Please try again later.' }, { status: 500 });
+  }
+
+  const contentType = request.headers.get('content-type') || '';
+  if (!contentType.includes('application/json')) {
+    return Response.json({ ok: false, error: 'Invalid request.' }, { status: 415 });
   }
 
   let body;

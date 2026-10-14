@@ -89,6 +89,10 @@ export default function ContactForm({ prefill, source = 'website', onDone, autoF
 
     setStatus('sending');
     setServerError('');
+    // Lightweight analytics hook; no-ops when GA isn't configured.
+    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+      window.gtag('event', 'submit_lead_form', { source, project: form.project });
+    }
     try {
       const res = await fetch('/api/contact', {
         method: 'POST',

@@ -36,7 +36,7 @@ const Navbar = () => {
         <Link href="/" className="nav-logo" onClick={() => setOpen(false)}>
           <Image src="/images/logos/IMG_3904.jpeg" alt="" width={34} height={34} priority />
           <span>
-            Growth<span className="nav-logo-accent">mint</span> AI
+            Tevra<span className="nav-logo-accent">tech</span>
           </span>
         </Link>
 
